@@ -1,40 +1,37 @@
 package com.mascotas.mascotas.controller;
 
-import static org.mockito.Mockito.when;
-import java.util.Arrays;
-import java.util.List;
-
-import org.hamcrest.Matchers;
+import com.mascotas.mascotas.Controller.MascotasController;
+import com.mascotas.mascotas.model.Mascotas;
+import com.mascotas.mascotas.service.MascotasService;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
-import com.mascotas.mascotas.model.Mascotas;
-import com.mascotas.mascotas.service.MascotasService;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.mascotas.mascotas.Controller.MascotasController;
-import com.mascotas.mascotas.service.MascotasServiceImpl;
-
-@WebMvcTest(MascotasController.class)
+@WebMvcTest(MascotasController.class) 
 public class MascotasControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private MascotasServiceImpl mascotasServicioMock;
+    private MascotasService mascotasService;
 
     @Test
     public void obtenerTodosTest() throws Exception {
-
-        // Creación de Tipo
         Mascotas mascotas1 = new Mascotas();
         mascotas1.setTipoProducto("Master Cat 10kg");
         mascotas1.setId(1L);
@@ -44,32 +41,26 @@ public class MascotasControllerTest {
         mascotas2.setId(2L);
 
         List<Mascotas> mascotas = Arrays.asList(mascotas1, mascotas2);
-        when(mascotasServicioMock.getAllMascotas()).thenReturn(mascotas);
+        Mockito.when(mascotasService.getAllMascotas()).thenReturn(mascotas);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/mascotas"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(2)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].TipoProducto", Matchers.is("Master Cat 10kg")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].TipoProducto", Matchers.is("Master Dog 20kg")));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].tipoProducto", is("Master Cat 10kg")))
+                .andExpect(jsonPath("$[1].tipoProducto", is("Master Dog 20kg")));
     }
 
-         @MockBean
-        private MascotasService mascotasService;
-        @Test
-        public void testGetMascotaByIdHateoasLinks() throws Exception {
-       
+    @Test
+    public void testGetMascotaByIdHateoasLinks() throws Exception {
         Mascotas mockMascota = new Mascotas();
         mockMascota.setId(1L);
         mockMascota.setTipoProducto("Mock Producto");
 
-        
-        when(mascotasService.getMascotasById(1L)).thenReturn(Optional.of(mockMascota));
+        Mockito.when(mascotasService.getMascotasById(anyLong())).thenReturn(Optional.of(mockMascota));
 
-        // Realiza la prueba HATEOAS.
         mockMvc.perform(MockMvcRequestBuilders.get("/mascotas/{id}", 1L))
-               .andExpect(status().isOk())
-               .andExpect(jsonPath("$._links.self.href").exists())
-               .andExpect(jsonPath("$._links.all-mascotas.href").exists());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._links.self.href").exists())
+                .andExpect(jsonPath("$._links.all-mascotas.href").exists());
     }
 }
-

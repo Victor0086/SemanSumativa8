@@ -2,7 +2,7 @@ package com.mascotas.mascotas.Controller;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.mascotas.mascotas.model.Mascotas;
 import com.mascotas.mascotas.service.MascotasService;
-
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,18 +38,21 @@ public class MascotasController {
         return mascotasService.getAllMascotas();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Object> getMascotasById(@PathVariable Long id) {
-        Optional<Mascotas> mascota = mascotasService.getMascotasById(id);
-
-        if (mascota.isPresent()) {
-            return ResponseEntity.ok(mascota.get());
-        } else {
-            log.error("No se encontró el producto de mascota con ID {}", id);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("No se encontró el producto de mascota con ID " + id));
-        }
+  @GetMapping("/{id}")
+public ResponseEntity<Object> getMascotasById(@PathVariable Long id) {
+    Optional<Mascotas> mascota = mascotasService.getMascotasById(id);
+    if (mascota.isPresent()) {
+        EntityModel<Mascotas> resource = EntityModel.of(mascota.get());
+        // Añadir enlaces HATEOAS
+        resource.add(linkTo(methodOn(MascotasController.class).getMascotasById(id)).withSelfRel());
+        resource.add(linkTo(methodOn(MascotasController.class).getAllMascotas()).withRel("all-mascotas"));
+        return ResponseEntity.ok(resource);
+    } else {
+        log.error("No se encontró el producto de mascota con ID {}", id);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse("No se encontró el producto de mascota con ID " + id));
     }
+}
     @PostMapping
     public ResponseEntity<Object> createMascotas(@Validated  @RequestBody Mascotas mascotas) {
         Mascotas createdMascotas = mascotasService.createMascotas(mascotas);

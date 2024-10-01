@@ -1,5 +1,6 @@
 package com.mascotas.mascotas.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -18,80 +19,78 @@ public class Mascotas {
     @Column(name = "id")
     private Long id;
 
-    @NotNull(message = "No puede dejar TipoProducto vacio")
-    @NotBlank(message = "No puede dejar TipoProducto vacio")
+    @NotNull(message = "No puede dejar TipoProducto vacío")
+    @NotBlank(message = "No puede dejar TipoProducto vacío")
     @Column(name = "TipoProducto")
-    private String TipoProducto;
+    private String tipoProducto; 
 
-    @Size(min = 6, max = 50, message = "El destinatario debe tener entre 3 y 50 caracteres")
+    @Size(min = 6, max = 50, message = "El destinatario debe tener entre 6 y 50 caracteres")
     @NotNull(message = "El destinatario no puede ser nulo")
-    @NotBlank(message = "No puede dejar TipoProducto vacio")
+    @NotBlank(message = "El destinatario no puede estar vacío")
     @Column(name = "destinatario")
     private String destinatario;
 
     @NotNull(message = "La dirección de destino no puede ser nula")
-    @NotBlank(message = "No puede dejar TipoProducto vacio")
-    @Column(name = "direccionDestino")
-    private String direcccionDestino;
+    @NotBlank(message = "La dirección de destino no puede estar vacía")
+    @Column(name = "direccionDestino") 
+    private String direccionDestino;
 
-    @NotNull(message = "La fechaEnvio no puede ser nulo")
+    @NotNull(message = "La fecha de envío no puede ser nula")
     @Column(name = "fechaEnvio")
-    private LocalDateTime fechaEnvio;
+    private LocalDateTime fechaEnvio; 
 
-    @NotNull(message = "La ubicacionActual no puede ser nulo")
-    @NotBlank(message = "No puede dejar TipoProducto vacio")
+    @NotNull(message = "La ubicación actual no puede ser nula")
+    @NotBlank(message = "La ubicación actual no puede estar vacía")
     @Column(name = "ubicacionActual")
     private String ubicacionActual;
 
-    //Getter
-    public Long getId(){
-        return id;  
+    // Getters
+    public Long getId() {
+        return id;
     }
 
-    public String getTipoProducto(){
-        return TipoProducto;
+    public String getTipoProducto() {
+        return tipoProducto;
     }
 
-    public String getDestinatario(){
+    public String getDestinatario() {
         return destinatario;
     }
 
-    public String getDirecccionDestino(){
-        return direcccionDestino;
+    public String getDireccionDestino() {
+        return direccionDestino;
     }
-    
-    public LocalDateTime getFechaEnvio(){
+
+    public LocalDateTime getFechaEnvio() {
         return fechaEnvio;
     }
 
-    public String getUbicacionActual(){
+    public String getUbicacionActual() {
         return ubicacionActual;
     }
 
-     //Setters
-
-    public void setId(Long id){
+    // Setters
+    public void setId(Long id) {
         this.id = id;
     }
-    
-    public void setTipoProducto(String TipoProducto){
-        this.TipoProducto = TipoProducto;
+
+    public void setTipoProducto(String tipoProducto) {
+        this.tipoProducto = tipoProducto;
     }
 
-    public void setDestinatario(String destinatario){
+    public void setDestinatario(String destinatario) {
         this.destinatario = destinatario;
     }
 
-    public void setDirecccionDestino(String direccionDestino){
-        this.direcccionDestino = direccionDestino;
+    public void setDireccionDestino(String direccionDestino) {
+        this.direccionDestino = direccionDestino;
     }
 
-    public void setFechaEnvio(LocalDateTime fechaEnvio){
+    public void setFechaEnvio(LocalDateTime fechaEnvio) {
         this.fechaEnvio = fechaEnvio;
     }
 
-    public void setUbicacionActual(String ubicacionActual){
+    public void setUbicacionActual(String ubicacionActual) {
         this.ubicacionActual = ubicacionActual;
     }
-
 }
